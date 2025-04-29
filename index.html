@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNILAG CGPA Calculator by ShazdTechBro</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --primary: #003366;
+            --secondary: #00aa55;
+            --accent: #ff4444;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+        .tagline {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .calculator {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        .input-group input {
+            flex: 1 1 150px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        .input-group button {
+            padding: 10px 15px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            flex: 1 1 auto;
+            font-size: 0.9rem;
+        }
+        .input-group button:hover {
+            background: #002244;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            overflow-x: auto;
+            display: block;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+            min-width: 80px;
+        }
+        th {
+            background: var(--primary);
+            color: white;
+        }
+        tr:hover {
+            background: #f9f9f9;
+        }
+        .action-btn {
+            padding: 5px 10px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .remove-btn {
+            background: var(--accent);
+            color: white;
+        }
+        .remove-btn:hover {
+            background: #cc0000;
+        }
+        .export-btn {
+            background: var(--secondary);
+            color: white;
+            padding: 10px 15px;
+            margin-top: 10px;
+        }
+        .export-btn:hover {
+            background: #008844;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0f8ff;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        .gpa-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        .grade-class {
+            font-weight: bold;
+            color: var(--secondary);
+        }
+        .attribution {
+            text-align: center;
+            margin-top: 30px;
+            padding: 15px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .whatsapp-btn {
+            background: #25D366 !important;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .whatsapp-btn:hover {
+            background: #128C7E !important;
+        }
+        .motivation {
+            margin: 15px 0;
+            padding: 15px;
+            border-left: 4px solid var(--primary);
+            background: #f0f8ff;
+            border-radius: 5px;
+            font-style: italic;
+            font-size: 0.95rem;
+        }
+        .hypothetical-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px dashed var(--primary);
+            border-radius: 8px;
+        }
+        .hypo-select {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid var(--primary);
+            border-radius: 4px;
+        }
+        .hypo-btn {
+            background: var(--secondary) !important;
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+        }
+        .hypo-result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e8f5e9;
+            border-radius: 5px;
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            .input-group input {
+                flex: 1 1 100%;
+            }
+            table {
+                display: table;
+                width: 100%;
+            }
+            th, td {
+                padding: 8px;
+                font-size: 0.85rem;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator" id="calculator">
+        <h1>UNILAG CGPA Calculator</h1>
+        <p class="tagline">Built with ❤️ by <strong>ShazdTechBro</strong></p>
+        
+        <div class="input-group">
+            <input type="text" id="course" placeholder="Course (e.g., MTH101)">
+            <input type="number" id="units" min="1" max="6" placeholder="Units (e.g., 3)">
+            <input type="number" id="score" min="0" max="100" placeholder="Score (0-100)">
+            <button onclick="addCourse()">Add Course</button>
+        </div>
+        
+        <table id="coursesTable">
+            <thead>
+                <tr>
+                    <th>Course</th>
+                    <th>Units</th>
+                    <th>Score</th>
+                    <th>Grade</th>
+                    <th>Points</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="coursesBody"></tbody>
+        </table>
+
+        <div class="hypothetical-section">
+            <h3>What If Calculator</h3>
+            <select id="courseSelector" class="hypo-select">
+                <option value="">Select a course to upgrade</option>
+            </select>
+            <button onclick="calculateHypothetical()" class="hypo-btn">
+                📈 See A Grade Impact
+            </button>
+            <div id="hypotheticalResult" class="hypo-result"></div>
+        </div>
+
+        <div class="motivation" id="motivation"></div>
+        
+        <div class="input-group">
+            <button onclick="calculateGPA()">Calculate GPA</button>
+            <button class="export-btn" onclick="exportAsPDF()">Save as PDF</button>
+            <button class="export-btn whatsapp-btn" onclick="sendWhatsApp()">📱 Request Feature</button>
+        </div>
+        
+        <div id="result"></div>
+    </div>
+
+    <div class="attribution">
+        <p>Need a custom tech project?<br> 
+        WhatsApp me: <a href="https://wa.me/2347084708292" target="_blank">+234 708 470 8292</a></p>
+        <p>⚡ Made for UNILAG students by <strong>ShazdTechBro</strong> ⚡</p>
+    </div>
+
+    <script>
+        const { jsPDF } = window.jspdf;
+        let courses = JSON.parse(localStorage.getItem('unilagCourses')) || [];
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            updateUI();
+        });
+
+        // ========== CORE FUNCTIONALITY ========== //
+        function getGrade(score) {
+            if (score >= 70) return { grade: 'A', point: 5.00 };
+            if (score >= 60) return { grade: 'B', point: 4.00 };
+            if (score >= 50) return { grade: 'C', point: 3.00 };
+            if (score >= 45) return { grade: 'D', point: 2.00 };
+            if (score >= 40) return { grade: 'E', point: 1.00 };
+            return { grade: 'F', point: 0.00 };
+        }
+
+        function addCourse() {
+            const courseName = document.getElementById('course').value.trim();
+            const units = parseInt(document.getElementById('units').value);
+            const score = parseInt(document.getElementById('score').value);
+            
+            if (!courseName || isNaN(units) || isNaN(score)) {
+                alert("Please fill all fields correctly!");
+                return;
+            }
+            
+            const gradeInfo = getGrade(score);
+            const course = {
+                name: courseName,
+                units: units,
+                score: score,
+                grade: gradeInfo.grade,
+                points: gradeInfo.point * units
+            };
+            
+            courses.push(course);
+            updateUI();
+            clearInputs();
+        }
+
+        function removeCourse(index) {
+            courses.splice(index, 1);
+            updateUI();
+        }
+
+        function clearInputs() {
+            document.getElementById('course').value = '';
+            document.getElementById('units').value = '';
+            document.getElementById('score').value = '';
+        }
+
+        // ========== UI UPDATES ========== //
+        function updateUI() {
+            updateTable();
+            updateCourseSelector();
+            saveCourses();
+            if (courses.length > 0) calculateGPA();
+        }
+
+        function updateTable() {
+            const tableBody = document.getElementById('coursesBody');
+            tableBody.innerHTML = courses.length ? 
+                courses.map((course, index) => `
+                    <tr>
+                        <td>${course.name}</td>
+                        <td>${course.units}</td>
+                        <td>${course.score}</td>
+                        <td>${course.grade}</td>
+                        <td>${course.points.toFixed(2)}</td>
+                        <td><button class="action-btn remove-btn" onclick="removeCourse(${index})">Remove</button></td>
+                    </tr>
+                `).join('') : 
+                `<tr><td colspan="6" style="text-align:center;">No courses added yet</td></tr>`;
+        }
+
+        function updateCourseSelector() {
+            const selector = document.getElementById('courseSelector');
+            selector.innerHTML = `
+                <option value="">Select a course to upgrade</option>
+                ${courses.map((course, index) => 
+                    course.grade !== 'A' ? 
+                    `<option value="${index}">${course.name} (${course.grade} → A)</option>` : 
+                    ''
+                ).join('')}
+            `;
+        }
+
+        // ========== GPA CALCULATIONS ========== //
+        function calculateGPA() {
+            const totalPoints = courses.reduce((sum, c) => sum + c.points, 0);
+            const totalUnits = courses.reduce((sum, c) => sum + c.units, 0);
+            const gpa = totalPoints / totalUnits;
+            const gradeClass = getGradeClass(gpa);
+            
+            document.getElementById('result').innerHTML = `
+                <p>Total Quality Points: <strong>${totalPoints.toFixed(2)}</strong></p>
+                <p>Total Credit Units: <strong>${totalUnits}</strong></p>
+                <p>GPA: <span class="gpa-value">${gpa.toFixed(2)}</span></p>
+                <p>Class: <span class="grade-class">${gradeClass}</span></p>
+            `;
+
+            const motivationMessages = {
+                "First Class": "🎉 First Class! You're absolutely killing it! Keep shining!",
+                "Second Class Upper": "🔥 Second Class Upper! Amazing work! Aim higher next time!",
+                "Second Class Lower": "💪 Second Class Lower! You're doing well, but greatness is within reach!",
+                "Third Class": "📚 Third Class! Let's strategize for improvement. You've got this!",
+                "Pass / Probation": "🚨 Let's work together to improve. DM me on WhatsApp for tips!"
+            };
+            document.getElementById('motivation').innerHTML = `<p>${motivationMessages[gradeClass]}</p>`;
+        }
+
+        function getGradeClass(gpa) {
+            if (gpa >= 4.50) return "First Class";
+            if (gpa >= 3.50) return "Second Class Upper";
+            if (gpa >= 2.40) return "Second Class Lower";
+            if (gpa >= 1.50) return "Third Class";
+            return "Pass / Probation";
+        }
+
+        // ========== WHAT-IF CALCULATOR ========== //
+        function calculateHypothetical() {
+            const index = parseInt(document.getElementById('courseSelector').value);
+            const resultDiv = document.getElementById('hypotheticalResult');
+            
+            if (isNaN(index)) {
+                resultDiv.style.display = 'none';
+                return;
+            }
+
+            const hypothetical = courses.map((course, i) => 
+                i === index ? {...course, grade: 'A', points: 5 * course.units} : course
+            );
+
+            const currentGPA = calculateCurrentGPA();
+            const potentialGPA = hypothetical.reduce((sum, c) => sum + c.points, 0) / 
+                               courses.reduce((sum, c) => sum + c.units, 0);
+            const difference = potentialGPA - currentGPA;
+
+            resultDiv.innerHTML = `
+                <p>Current GPA: <strong>${currentGPA.toFixed(2)}</strong></p>
+                <p>Potential GPA: <strong>${potentialGPA.toFixed(2)}</strong></p>
+                <p>Difference: 
+                    <strong style="color: ${difference > 0 ? '#00aa55' : '#ff4444'}">
+                        ${difference.toFixed(2)}
+                    </strong>
+                </p>
+            `;
+            resultDiv.style.display = 'block';
+        }
+
+        function calculateCurrentGPA() {
+            return courses.reduce((sum, c) => sum + c.points, 0) / 
+                   courses.reduce((sum, c) => sum + c.units, 0) || 0;
+        }
+
+        // ========== DATA & EXPORT ========== //
+        function saveCourses() {
+            localStorage.setItem('unilagCourses', JSON.stringify(courses));
+        }
+
+        function exportAsPDF() {
+            html2canvas(document.getElementById('calculator')).then(canvas => {
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const imgProps = pdf.getImageProperties(canvas);
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                pdf.addImage(canvas, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                pdf.save('unilag-cgpa-result.pdf');
+            });
+        }
+
+        function exportAsPNG() {
+            html2canvas(document.getElementById('calculator')).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'unilag-cgpa-result.png';
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        }
+
+        function sendWhatsApp() {
+            const text = encodeURIComponent(
+                "Hi ShazdTechBro! I used your CGPA calculator. Can you build..."
+            );
+            window.open(`https://wa.me/2347084708292?text=${text}`, '_blank');
+        }
+    </script>
+</body>
+</html>
