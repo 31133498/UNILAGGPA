@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UNILAG CGPA Calculator by ShazdTechBro</title>
+    <title>Enhanced UNILAG CGPA Calculator</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
@@ -11,246 +11,532 @@
             --primary: #003366;
             --secondary: #00aa55;
             --accent: #ff4444;
+            --light-accent: #ff9999;
+            --light-secondary: #99e6c3;
+            --light-primary: #6684a3;
+            --border-radius: 10px;
+            --transition: all 0.3s ease;
         }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
-            max-width: 700px;
+            max-width: 800px;
             margin: 0 auto;
             padding: 20px;
-            background: #f5f5f5;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            color: #333;
+            line-height: 1.6;
         }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+        }
+        
         h1 {
             color: var(--primary);
-            text-align: center;
-            margin-bottom: 10px;
-            font-size: 1.8rem;
+            margin-bottom: 5px;
+            font-size: 2rem;
         }
+        
         .tagline {
-            text-align: center;
             color: #666;
-            margin-bottom: 20px;
             font-style: italic;
+            margin-bottom: 15px;
         }
+        
         .calculator {
             background: white;
-            border-radius: 10px;
+            border-radius: var(--border-radius);
             padding: 25px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
         }
+        
+        .input-section {
+            background: #f9fbfd;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            border: 1px solid #e0e7ef;
+        }
+        
         .input-group {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
             margin-bottom: 15px;
         }
+        
         .input-group input {
             flex: 1 1 150px;
-            padding: 10px;
+            padding: 12px 15px;
             border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 0.9rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
         }
+        
+        .input-group input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.1);
+            outline: none;
+        }
+        
         .input-group button {
-            padding: 10px 15px;
+            padding: 12px 20px;
             background: var(--primary);
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             flex: 1 1 auto;
-            font-size: 0.9rem;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: var(--transition);
         }
+        
         .input-group button:hover {
             background: #002244;
+            transform: translateY(-2px);
         }
+        
+        .input-group button.add-btn {
+            background: var(--secondary);
+        }
+        
+        .input-group button.add-btn:hover {
+            background: #008844;
+        }
+        
+        .courses-table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+            border-radius: var(--border-radius);
+            border: 1px solid #e0e7ef;
+            background: white;
+        }
+        
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
-            overflow-x: auto;
-            display: block;
+            min-width: 600px;
         }
+        
         th, td {
-            padding: 12px;
+            padding: 15px;
             text-align: left;
             border-bottom: 1px solid #eee;
-            min-width: 80px;
         }
+        
         th {
             background: var(--primary);
             color: white;
+            font-weight: 600;
         }
+        
+        tr:nth-child(even) {
+            background-color: #f9fbfd;
+        }
+        
         tr:hover {
-            background: #f9f9f9;
+            background-color: #f0f8ff;
         }
+        
         .action-btn {
-            padding: 5px 10px;
-            margin: 0 5px;
+            padding: 8px 12px;
+            margin: 0 3px;
             border: none;
-            border-radius: 3px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            font-weight: 600;
         }
-        .remove-btn {
-            background: var(--accent);
+        
+        .edit-btn {
+            background: var(--light-primary);
             color: white;
         }
-        .remove-btn:hover {
-            background: #cc0000;
+        
+        .edit-btn:hover {
+            background: #335d8c;
         }
+        
+        .save-btn {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        .save-btn:hover {
+            background: #008844;
+        }
+        
+        .cancel-btn {
+            background: #999;
+            color: white;
+        }
+        
+        .cancel-btn:hover {
+            background: #777;
+        }
+        
+        .remove-btn {
+            background: var(--light-accent);
+            color: white;
+        }
+        
+        .remove-btn:hover {
+            background: #e60000;
+        }
+        
         .export-btn {
             background: var(--secondary);
             color: white;
-            padding: 10px 15px;
+            padding: 12px 20px;
             margin-top: 10px;
+            font-weight: 600;
         }
+        
         .export-btn:hover {
             background: #008844;
         }
+        
         #result {
             margin-top: 20px;
-            padding: 15px;
-            background: #f0f8ff;
-            border-radius: 5px;
-            font-size: 1rem;
+            padding: 20px;
+            background: linear-gradient(135deg, #f0f8ff 0%, #e6f2ff 100%);
+            border-radius: var(--border-radius);
+            border: 1px solid #cce0ff;
         }
+        
         .gpa-value {
-            font-size: 1.5rem;
+            font-size: 2rem;
             font-weight: bold;
             color: var(--primary);
+            margin: 10px 0;
         }
+        
         .grade-class {
             font-weight: bold;
             color: var(--secondary);
+            font-size: 1.3rem;
         }
+        
         .attribution {
             text-align: center;
             margin-top: 30px;
-            padding: 15px;
+            padding: 20px;
             color: #666;
             font-size: 0.9rem;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
+        
         .whatsapp-btn {
             background: #25D366 !important;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
         }
+        
         .whatsapp-btn:hover {
             background: #128C7E !important;
         }
+        
         .motivation {
-            margin: 15px 0;
-            padding: 15px;
-            border-left: 4px solid var(--primary);
-            background: #f0f8ff;
-            border-radius: 5px;
-            font-style: italic;
-            font-size: 0.95rem;
-        }
-        .hypothetical-section {
             margin: 20px 0;
-            padding: 15px;
-            border: 2px dashed var(--primary);
-            border-radius: 8px;
+            padding: 20px;
+            border-left: 4px solid var(--primary);
+            background: linear-gradient(135deg, #f0f8ff 0%, #e6f7ff 100%);
+            border-radius: var(--border-radius);
+            font-style: italic;
+            font-size: 1rem;
         }
+        
+        .hypothetical-section {
+            margin: 25px 0;
+            padding: 20px;
+            border: 2px dashed var(--primary);
+            border-radius: var(--border-radius);
+            background: #f9fbfd;
+        }
+        
         .hypo-select {
             width: 100%;
-            padding: 8px;
-            margin: 10px 0;
+            padding: 12px;
+            margin: 10px 0 15px;
             border: 1px solid var(--primary);
-            border-radius: 4px;
+            border-radius: 8px;
+            background: white;
+            font-size: 1rem;
         }
+        
         .hypo-btn {
             background: var(--secondary) !important;
             width: 100%;
-            padding: 10px;
-            margin: 5px 0;
+            padding: 12px;
+            margin: 10px 0;
+            font-weight: 600;
         }
+        
         .hypo-result {
-            margin-top: 10px;
-            padding: 10px;
+            margin-top: 20px;
+            padding: 20px;
             background: #e8f5e9;
-            border-radius: 5px;
+            border-radius: var(--border-radius);
             display: none;
         }
-
-        @media (max-width: 600px) {
-            .input-group input {
-                flex: 1 1 100%;
+        
+        .feature-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        
+        .multi-select-container {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+            background: white;
+        }
+        
+        .course-option {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .course-option:last-child {
+            border-bottom: none;
+        }
+        
+        .course-option input {
+            margin-right: 10px;
+        }
+        
+        .feature-highlights {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .feature-card {
+            flex: 1 1 200px;
+            padding: 20px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            border-top: 3px solid var(--primary);
+        }
+        
+        .feature-card h3 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+        
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
             }
-            table {
-                display: table;
+            
+            h1 {
+                font-size: 1.7rem;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .input-group input, 
+            .input-group button {
                 width: 100%;
+                margin-bottom: 10px;
             }
+            
+            .feature-highlights {
+                flex-direction: column;
+            }
+            
             th, td {
-                padding: 8px;
-                font-size: 0.85rem;
+                padding: 12px 8px;
+                font-size: 0.9rem;
             }
+            
+            .action-btn {
+                padding: 6px 10px;
+                font-size: 0.8rem;
+                margin: 2px;
+            }
+            
+            .gpa-value {
+                font-size: 1.8rem;
+            }
+            
+            .calculator {
+                padding: 20px 15px;
+            }
+            
+            .input-section {
+                padding: 15px;
+            }
+        }
+        
+        @media (max-width: 480px) {
             h1 {
                 font-size: 1.5rem;
             }
+            
+            .tagline {
+                font-size: 0.9rem;
+            }
+            
+            th, td {
+                padding: 10px 6px;
+                font-size: 0.85rem;
+            }
+            
+            .action-btn {
+                padding: 5px 8px;
+                font-size: 0.75rem;
+            }
+            
+            .gpa-value {
+                font-size: 1.6rem;
+            }
+        }
+        
+        .edit-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
-    <div class="calculator" id="calculator">
-        <h1>UNILAG CGPA Calculator</h1>
-        <p class="tagline">Built with ❤️ by <strong>ShazdTechBro</strong></p>
+    <div class="container">
+        <header>
+            <h1>Enhanced UNILAG CGPA Calculator</h1>
+            <p class="tagline">Built with ❤️ by <strong>ShazdTechBro</strong></p>
+            
+            <div class="feature-highlights">
+                <div class="feature-card">
+                    <h3>New Features</h3>
+                    <p>✅ Edit course scores directly</p>
+                    <p>✅ Multi-course grade simulation</p>
+                    <p>✅ Enhanced mobile experience</p>
+                </div>
+                <div class="feature-card">
+                    <h3>How to Use</h3>
+                    <p>1. Add courses with units & scores</p>
+                    <p>2. Click edit to modify existing entries</p>
+                    <p>3. Simulate grade improvements</p>
+                </div>
+            </div>
+        </header>
         
-        <div class="input-group">
-            <input type="text" id="course" placeholder="Course (e.g., MTH101)">
-            <input type="number" id="units" min="1" max="6" placeholder="Units (e.g., 3)">
-            <input type="number" id="score" min="0" max="100" placeholder="Score (0-100)">
-            <button onclick="addCourse()">Add Course</button>
-        </div>
-        
-        <table id="coursesTable">
-            <thead>
-                <tr>
-                    <th>Course</th>
-                    <th>Units</th>
-                    <th>Score</th>
-                    <th>Grade</th>
-                    <th>Points</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="coursesBody"></tbody>
-        </table>
+        <div class="calculator" id="calculator">
+            <div class="input-section">
+                <h2>Add Course</h2>
+                <div class="input-group">
+                    <input type="text" id="course" placeholder="Course (e.g., MTH101)">
+                    <input type="number" id="units" min="1" max="6" placeholder="Units (e.g., 3)">
+                    <input type="number" id="score" min="0" max="100" placeholder="Score (0-100)">
+                    <button class="add-btn" onclick="addCourse()">Add Course</button>
+                </div>
+            </div>
+            
+            <div class="courses-table-container">
+                <table id="coursesTable">
+                    <thead>
+                        <tr>
+                            <th>Course</th>
+                            <th>Units</th>
+                            <th>Score</th>
+                            <th>Grade</th>
+                            <th>Points</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="coursesBody"></tbody>
+                </table>
+            </div>
 
-        <div class="hypothetical-section">
-            <h3>What If Calculator</h3>
-            <select id="courseSelector" class="hypo-select">
-                <option value="">Select a course to upgrade</option>
-            </select>
-            <button onclick="calculateHypothetical()" class="hypo-btn">
-                📈 See A Grade Impact
-            </button>
-            <div id="hypotheticalResult" class="hypo-result"></div>
+            <div class="hypothetical-section">
+                <h2>Grade Simulation <span class="feature-badge">NEW</span></h2>
+                <p>Select multiple courses to simulate upgrading their grades to 'A':</p>
+                
+                <div class="multi-select-container" id="multiSelectContainer">
+                    <!-- Options will be populated by JavaScript -->
+                </div>
+                
+                <button onclick="calculateHypothetical()" class="hypo-btn">
+                    📈 Simulate Grade Improvement
+                </button>
+                <div id="hypotheticalResult" class="hypo-result"></div>
+            </div>
+
+            <div class="motivation" id="motivation"></div>
+            
+            <div class="input-group">
+                <button onclick="calculateGPA()">Calculate GPA</button>
+                <button class="export-btn" onclick="exportAsPDF()">Save as PDF</button>
+                <button class="export-btn whatsapp-btn" onclick="sendWhatsApp()">📱 Request Feature</button>
+            </div>
+            
+            <div id="result"></div>
         </div>
 
-        <div class="motivation" id="motivation"></div>
-        
-        <div class="input-group">
-            <button onclick="calculateGPA()">Calculate GPA</button>
-            <button class="export-btn" onclick="exportAsPDF()">Save as PDF</button>
-            <button class="export-btn whatsapp-btn" onclick="sendWhatsApp()">📱 Request Feature</button>
+        <div class="attribution">
+            <p>Need a custom tech project?<br> 
+            WhatsApp me: <a href="https://wa.me/2347084708292" target="_blank">+234 708 470 8292</a></p>
+            <p>⚡ Made for UNILAG students by <strong>ShazdTechBro</strong> ⚡</p>
         </div>
-        
-        <div id="result"></div>
-    </div>
-
-    <div class="attribution">
-        <p>Need a custom tech project?<br> 
-        WhatsApp me: <a href="https://wa.me/2347084708292" target="_blank">+234 708 470 8292</a></p>
-        <p>⚡ Made for UNILAG students by <strong>ShazdTechBro</strong> ⚡</p>
     </div>
 
     <script>
         const { jsPDF } = window.jspdf;
         let courses = JSON.parse(localStorage.getItem('unilagCourses')) || [];
+        let editingIndex = -1;
         
         document.addEventListener('DOMContentLoaded', () => {
             updateUI();
@@ -301,10 +587,47 @@
             document.getElementById('score').value = '';
         }
 
+        // ========== EDIT FUNCTIONALITY ========== //
+        function editCourse(index) {
+            editingIndex = index;
+            updateUI();
+        }
+
+        function saveCourse(index) {
+            const row = document.getElementById(`row-${index}`);
+            if (!row) return;
+            
+            const name = row.querySelector('.edit-course').value.trim();
+            const units = parseInt(row.querySelector('.edit-units').value);
+            const score = parseInt(row.querySelector('.edit-score').value);
+            
+            if (!name || isNaN(units) || isNaN(score)) {
+                alert("Please fill all fields correctly!");
+                return;
+            }
+            
+            const gradeInfo = getGrade(score);
+            courses[index] = {
+                name: name,
+                units: units,
+                score: score,
+                grade: gradeInfo.grade,
+                points: gradeInfo.point * units
+            };
+            
+            editingIndex = -1;
+            updateUI();
+        }
+
+        function cancelEdit() {
+            editingIndex = -1;
+            updateUI();
+        }
+
         // ========== UI UPDATES ========== //
         function updateUI() {
             updateTable();
-            updateCourseSelector();
+            updateMultiSelect();
             saveCourses();
             if (courses.length > 0) calculateGPA();
         }
@@ -312,29 +635,52 @@
         function updateTable() {
             const tableBody = document.getElementById('coursesBody');
             tableBody.innerHTML = courses.length ? 
-                courses.map((course, index) => `
-                    <tr>
-                        <td>${course.name}</td>
-                        <td>${course.units}</td>
-                        <td>${course.score}</td>
-                        <td>${course.grade}</td>
-                        <td>${course.points.toFixed(2)}</td>
-                        <td><button class="action-btn remove-btn" onclick="removeCourse(${index})">Remove</button></td>
-                    </tr>
-                `).join('') : 
-                `<tr><td colspan="6" style="text-align:center;">No courses added yet</td></tr>`;
+                courses.map((course, index) => {
+                    if (index === editingIndex) {
+                        return `
+                            <tr id="row-${index}">
+                                <td><input type="text" class="edit-input edit-course" value="${course.name}"></td>
+                                <td><input type="number" class="edit-input edit-units" min="1" max="6" value="${course.units}"></td>
+                                <td><input type="number" class="edit-input edit-score" min="0" max="100" value="${course.score}"></td>
+                                <td>${course.grade}</td>
+                                <td>${course.points.toFixed(2)}</td>
+                                <td>
+                                    <button class="action-btn save-btn" onclick="saveCourse(${index})">Save</button>
+                                    <button class="action-btn cancel-btn" onclick="cancelEdit()">Cancel</button>
+                                </td>
+                            </tr>
+                        `;
+                    } else {
+                        return `
+                            <tr id="row-${index}">
+                                <td>${course.name}</td>
+                                <td>${course.units}</td>
+                                <td>${course.score}</td>
+                                <td>${course.grade}</td>
+                                <td>${course.points.toFixed(2)}</td>
+                                <td>
+                                    <button class="action-btn edit-btn" onclick="editCourse(${index})">Edit</button>
+                                    <button class="action-btn remove-btn" onclick="removeCourse(${index})">Remove</button>
+                                </td>
+                            </tr>
+                        `;
+                    }
+                }).join('') : 
+                `<tr><td colspan="6" style="text-align:center; padding: 20px;">No courses added yet</td></tr>`;
         }
 
-        function updateCourseSelector() {
-            const selector = document.getElementById('courseSelector');
-            selector.innerHTML = `
-                <option value="">Select a course to upgrade</option>
-                ${courses.map((course, index) => 
+        function updateMultiSelect() {
+            const container = document.getElementById('multiSelectContainer');
+            container.innerHTML = courses.length ? 
+                courses.map((course, index) => 
                     course.grade !== 'A' ? 
-                    `<option value="${index}">${course.name} (${course.grade} → A)</option>` : 
+                    `<div class="course-option">
+                        <input type="checkbox" id="course-${index}" value="${index}">
+                        <label for="course-${index}">${course.name} (${course.grade} → A)</label>
+                    </div>` : 
                     ''
-                ).join('')}
-            `;
+                ).join('') : 
+                `<div style="text-align:center; padding: 10px; color: #777;">Add courses to enable simulation</div>`;
         }
 
         // ========== GPA CALCULATIONS ========== //
@@ -345,6 +691,7 @@
             const gradeClass = getGradeClass(gpa);
             
             document.getElementById('result').innerHTML = `
+                <h2>Your GPA Results</h2>
                 <p>Total Quality Points: <strong>${totalPoints.toFixed(2)}</strong></p>
                 <p>Total Credit Units: <strong>${totalUnits}</strong></p>
                 <p>GPA: <span class="gpa-value">${gpa.toFixed(2)}</span></p>
@@ -369,31 +716,40 @@
             return "Pass / Probation";
         }
 
-        // ========== WHAT-IF CALCULATOR ========== //
+        // ========== WHAT-IF CALCULATOR (MULTI-COURSE) ========== //
         function calculateHypothetical() {
-            const index = parseInt(document.getElementById('courseSelector').value);
+            const selected = [];
+            document.querySelectorAll('#multiSelectContainer input:checked').forEach(checkbox => {
+                selected.push(parseInt(checkbox.value));
+            });
+            
             const resultDiv = document.getElementById('hypotheticalResult');
             
-            if (isNaN(index)) {
-                resultDiv.style.display = 'none';
+            if (selected.length === 0) {
+                resultDiv.innerHTML = "<p>Please select at least one course to upgrade</p>";
+                resultDiv.style.display = 'block';
                 return;
             }
 
             const hypothetical = courses.map((course, i) => 
-                i === index ? {...course, grade: 'A', points: 5 * course.units} : course
+                selected.includes(i) ? {...course, grade: 'A', points: 5 * course.units} : course
             );
 
             const currentGPA = calculateCurrentGPA();
             const potentialGPA = hypothetical.reduce((sum, c) => sum + c.points, 0) / 
                                courses.reduce((sum, c) => sum + c.units, 0);
             const difference = potentialGPA - currentGPA;
+            
+            const selectedCourses = selected.map(i => courses[i].name).join(', ');
 
             resultDiv.innerHTML = `
+                <h3>Simulation Results</h3>
+                <p>Upgraded courses: <strong>${selectedCourses}</strong></p>
                 <p>Current GPA: <strong>${currentGPA.toFixed(2)}</strong></p>
                 <p>Potential GPA: <strong>${potentialGPA.toFixed(2)}</strong></p>
-                <p>Difference: 
+                <p>GPA Improvement: 
                     <strong style="color: ${difference > 0 ? '#00aa55' : '#ff4444'}">
-                        ${difference.toFixed(2)}
+                        ${difference > 0 ? '+' : ''}${difference.toFixed(2)}
                     </strong>
                 </p>
             `;
@@ -421,18 +777,9 @@
             });
         }
 
-        function exportAsPNG() {
-            html2canvas(document.getElementById('calculator')).then(canvas => {
-                const link = document.createElement('a');
-                link.download = 'unilag-cgpa-result.png';
-                link.href = canvas.toDataURL();
-                link.click();
-            });
-        }
-
         function sendWhatsApp() {
             const text = encodeURIComponent(
-                "Hi ShazdTechBro! I used your CGPA calculator. Can you build..."
+                "Hi ShazdTechBro! I used your enhanced CGPA calculator. Can you build..."
             );
             window.open(`https://wa.me/2347084708292?text=${text}`, '_blank');
         }
